@@ -1,7 +1,3 @@
-mod utils;
-
-use std::fmt::{Display, Formatter, Result};
-
 use wasm_bindgen::prelude::*;
 
 #[wasm_bindgen]
@@ -54,10 +50,6 @@ impl Universe {
         self.cells.as_ptr()
     }
 
-    pub fn render(&self) -> String {
-        self.to_string()
-    }
-
     pub fn tick(&mut self) {
         let mut next = self.cells.clone();
 
@@ -103,31 +95,4 @@ impl Universe {
         }
         count
     }
-}
-
-impl Display for Universe {
-    fn fmt(&self, f: &mut Formatter) -> Result {
-        for line in self.cells.as_slice().chunks(self.width as usize) {
-            for &cell in line {
-                let symbol = if cell == Cell::Dead { '◻' } else { '◼' };
-                write!(f, "{}", symbol)?;
-            }
-            write!(f, "\n")?;
-        }
-        Ok(())
-    }
-}
-
-#[cfg(feature = "wee_alloc")]
-#[global_allocator]
-static ALLOC: wee_alloc::WeeAlloc = wee_alloc::WeeAlloc::INIT;
-
-#[wasm_bindgen]
-extern "C" {
-    fn alert(s: &str);
-}
-
-#[wasm_bindgen]
-pub fn greet(name: &str) {
-    alert(&format!("Hello, {}!", name));
 }
